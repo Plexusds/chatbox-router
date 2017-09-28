@@ -59,7 +59,7 @@ public class TFLService {
 			double maxSimilarity = 0.0;
 			for (StationsEnum station : StationsEnum.values()) {
 				double similarity = StringSimilarity.similarity(tube_station, station.getName());
-				if (similarity > 0.7 && similarity > maxSimilarity) {
+				if (similarity > 0.5 && similarity > maxSimilarity) {
 					stationEnum = station;
 				}
 
