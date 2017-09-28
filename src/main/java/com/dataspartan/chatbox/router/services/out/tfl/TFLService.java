@@ -51,11 +51,11 @@ public class TFLService {
 		StationsEnum stationEnum = null;
 
 		if (message != null && message.getNlp() != null && message.getNlp().getEntities() != null
-				&& message.getNlp().getEntities().get("tube_stations") != null
-				&& message.getNlp().getEntities().get("tube_stations").length > 0) {
+				&& message.getNlp().getEntities().get("tube_station") != null
+				&& message.getNlp().getEntities().get("tube_station").length > 0) {
 
 			stationEnum = StationsEnum.NOT_FOUND;
-			tube_station = message.getNlp().getEntities().get("tube_stations")[0].getValue();
+			tube_station = message.getNlp().getEntities().get("tube_station")[0].getValue();
 			double maxSimilarity = 0.0;
 			for (StationsEnum station : StationsEnum.values()) {
 				double similarity = StringSimilarity.similarity(tube_station, station.getName());
