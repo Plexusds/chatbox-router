@@ -1,9 +1,10 @@
 package com.dataspartan.chatbox.router.model.wit;
 
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Map.Entry;
 
 import com.dataspartan.chatbox.router.model.wit.entities.WitResult;
+
 
 public class NaturalLanguageProcessingVO {
 
@@ -24,10 +25,11 @@ public class NaturalLanguageProcessingVO {
 
 	@Override
 	public String toString() {
-		String str = "null";
+		String str = "";
 		if (entities != null)
-			str = entities.entrySet().stream().map(entry -> entry.getKey() + " - " + arrayToString(entry.getValue()))
-					.collect(Collectors.joining(", "));
+		for (Entry<String, WitResult[]> entry:entities.entrySet() ) {
+			str += entry.getKey() + " - " + arrayToString(entry.getValue()) + ", ";
+		}
 		return "NaturalLanguageProcessingVO [entities=" + str + "]";
 	}
 
