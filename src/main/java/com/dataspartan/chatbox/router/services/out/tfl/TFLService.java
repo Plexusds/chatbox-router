@@ -83,7 +83,7 @@ public class TFLService {
 			result = "Sorry, The station name " + stationInfo.getA() + " is incorrect.";
 		} else {
 			String status = hbase.getStatusSeverityDescription(stationInfo.getB());
-			result = "The " + stationInfo.getA() + " station has " + status;
+			result = "The " + stationInfo.getB().getName() + " station has " + status;
 		}
 
 		return result;
