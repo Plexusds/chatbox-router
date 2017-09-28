@@ -96,7 +96,7 @@ public class TFLService {
 	 */
 	private void sendMessage(String userId, String message) {
 		try {
-			String pageAccessToken = SystemUtil.getEnv("MESSENGER_VALIDATION_TOKEN",
+			String pageAccessToken = SystemUtil.getEnv("MESSENGER_PAGE_ACCESS_TOKEN",
 					"EAAcJwZC7SUf0BAMVvQo1DpjSVCRtAiwrJeDKSop9LmXz88Jk7qaPZCsxLuHbZCv7Ex4utR3qUzndtLFGC6kqdGKkXs5QRaUMeg82XuD7Bk9ZAcBTv7fCFkLxp2zsBDWCjZCcMhHkpNqRjXj8XeXPAUaSZAMh1OXE8EpYUi2gIY6AZDZD");
 			MessengerSendClient sendClient = MessengerPlatform.newSendClientBuilder(pageAccessToken).build();
 			sendClient.sendTextMessage(userId, message);
