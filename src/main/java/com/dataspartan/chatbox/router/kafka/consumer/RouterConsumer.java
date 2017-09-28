@@ -10,9 +10,9 @@ import com.dataspartan.chatbox.router.model.MessengerMessageVO;
 import com.dataspartan.chatbox.router.services.RouterService;
 import com.dataspartan.chatbox.router.services.enums.ModulesEnum;
 
-public class RouterListener {
+public class RouterConsumer {
 	
-    private static final Logger log = LoggerFactory.getLogger(RouterListener.class);
+    private static final Logger log = LoggerFactory.getLogger(RouterConsumer.class);
 
 	@Autowired
 	private RouterService routerService;
@@ -23,7 +23,7 @@ public class RouterListener {
 			log.info(String.format("\nMessageId: [%s] \nUserId %s \nMessage: %s received", record.value().getMid(), record.key(), record.value()));
 			ModulesEnum topicTo = routerService.getTopic(record.value());
 			log.info(String.format("\\nMessageId: [%s] \nTopicTo: %s", record.value().getMid(), topicTo.getTopicTo()));
-			routerService.sendTflTube(record);
+			routerService.send(topicTo, record);
 			
 		} catch (Exception e) {
 			log.error(String.format("\nError processing MessageId: [%s] ", record.value().getMid()), e);

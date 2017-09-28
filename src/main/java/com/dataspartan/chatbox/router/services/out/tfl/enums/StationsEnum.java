@@ -1,7 +1,8 @@
-package com.dataspartan.chatbox.router.modules.tfl;
+package com.dataspartan.chatbox.router.services.out.tfl.enums;
 
 public enum StationsEnum {
 
+	NOT_FOUND(),
 	BAKERLOO("bakerloo", "Bakerloo"),
     CENTRAL("central", "Central"),
     CIRCLE("circle", "Circle"),
@@ -17,9 +18,17 @@ public enum StationsEnum {
 	private String id;
 	private String name;
 	
+	StationsEnum() { }
 	StationsEnum(String id, String name) {
 		this.id = id;
 		this.name = name;
 	}
+	public String getId() {
+		return id;
+	}
+	public String getName() {
+		return name;
+	}
+
 	
 }

@@ -1,4 +1,4 @@
-package com.dataspartan.chatbox.router;
+package com.dataspartan.chatbox.router.configs;
 
 
 import org.springframework.context.annotation.Bean;

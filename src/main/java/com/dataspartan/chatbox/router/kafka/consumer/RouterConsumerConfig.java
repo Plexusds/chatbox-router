@@ -1,4 +1,4 @@
-package com.dataspartan.chatbox.router.kafka.consumer.config;
+package com.dataspartan.chatbox.router.kafka.consumer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,17 +13,17 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
-import com.dataspartan.chatbox.router.kafka.consumer.RouterListener;
 import com.dataspartan.chatbox.router.model.MessengerMessageVO;
+import com.dataspartan.chatbox.router.utils.SystemUtil;
 
 @Configuration
 @EnableKafka
-public class KafkaConsumerConfig {
+public class RouterConsumerConfig {
 
 	@Bean
 	public Map<String, Object> consumerConfigs() {
 		Map<String, Object> propsMap = new HashMap<>();
-		propsMap.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "HortonWorks21:6667");
+		propsMap.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, SystemUtil.getEnv("KAFKA_BOOTSTRAP", "HortonWorks21:6667"));
 		propsMap.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
 		propsMap.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "100");
 		propsMap.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "15000");
@@ -48,8 +48,8 @@ public class KafkaConsumerConfig {
 	}
 
 	@Bean
-	public RouterListener listener() {
-		return new RouterListener();
+	public RouterConsumer listener() {
+		return new RouterConsumer();
 	}
 
 }

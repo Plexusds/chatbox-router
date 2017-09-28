@@ -1,4 +1,4 @@
-package com.dataspartan.chatbox.router.kafka.producer.config;
+package com.dataspartan.chatbox.router.kafka.producer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,10 +11,8 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 
-import com.dataspartan.chatbox.router.kafka.producer.RouterProducer;
-
 @Configuration
-public class KafkaProducerConfig {
+public class RouterProducerConfig {
 
   @Bean
   public Map<String, Object> producerConfigs() {
