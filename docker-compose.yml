@@ -1,0 +1,23 @@
+---
+version: '2'
+services:
+  # This container is in charge of messenger message management
+  # Send all the message to the "messenger-message-inbox" queue
+  chatbox-router:
+    image: dataspartan/chatbox-router
+    hostname: chatbox-router
+    environment:
+      - KAFKA_BOOTSTRAP= HortonWorks21:6667
+      - MESSENGER_VALIDATION_TOKEN=EAAcJwZC7SUf0BAMVvQo1DpjSVCRtAiwrJeDKSop9LmXz88Jk7qaPZCsxLuHbZCv7Ex4utR3qUzndtLFGC6kqdGKkXs5QRaUMeg82XuD7Bk9ZAcBTv7fCFkLxp2zsBDWCjZCcMhHkpNqRjXj8XeXPAUaSZAMh1OXE8EpYUi2gIY6AZDZD
+      - DEBUG=true
+    extra_hosts:
+       - "HortonWorks21:10.20.1.21"
+       - "hortonworks21:10.20.1.21"
+       - "HortonWorks22:10.20.1.22"
+       - "hortonworks22:10.20.1.22"
+       - "HortonWorks71:10.20.1.71"
+       - "hortonworks71:10.20.1.71"
+       - "HortonWorks72:10.20.1.72"
+       - "hortonworks72:10.20.1.72"
+       - "HortonWorks81:10.20.1.81"
+       - "hortonworks81:10.20.1.81"

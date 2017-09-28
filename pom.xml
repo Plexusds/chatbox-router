@@ -80,10 +80,33 @@
 	</dependencies>
 
 	<build>
+
+		<extensions>
+			<!-- Os Maven Plugin -->
+			<!-- A Maven extension/plugin that generates various useful platform-dependent 
+				project properties normalized from ${os.name} and ${os.arch}. -->
+			<extension>
+				<groupId>kr.motd.maven</groupId>
+				<artifactId>os-maven-plugin</artifactId>
+				<version>1.4.1.Final</version>
+			</extension>
+		</extensions>
+
 		<plugins>
+			<!-- Spring boot plugin -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<!-- Generate Docker image -->
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>0.4.10</version>
+				<configuration>
+					<imageName>dataspartan/chatbox-router</imageName>
+					<dockerDirectory>${project.basedir}</dockerDirectory>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
