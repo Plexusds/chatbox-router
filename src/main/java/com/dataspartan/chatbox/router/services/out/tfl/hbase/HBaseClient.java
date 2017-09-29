@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import com.dataspartan.chatbox.router.services.out.tfl.enums.StationsEnum;
+import com.dataspartan.chatbox.router.utils.Pair;
 import com.dataspartan.chatbox.router.utils.SystemUtil;
 
 @Repository
@@ -21,9 +22,9 @@ public class HBaseClient {
 
 	private static final Logger log = LoggerFactory.getLogger(HBaseClient.class);
 
-	public String getStatusSeverityDescription(StationsEnum station) throws Exception {
+	public Pair<String, Long> getStatusSeverityDescription(StationsEnum station) throws Exception {
 		try {
-			String result = null;
+			Pair<String, Long>  result = null;
 			String hbaseZookeeper = SystemUtil.getEnv("ZOOKEEPER_SERVER","hortonworks21:2181");
 			TableName tableName = TableName.valueOf("tfl-tube");
 			Configuration conf = HBaseConfiguration.create();
@@ -32,9 +33,15 @@ public class HBaseClient {
 			conf.set("zookeeper.znode.parent", "/hbase-unsecure");
 			try (Connection conn = ConnectionFactory.createConnection(conf); Table table = conn.getTable(tableName);) {
 				Result r = table.get(new Get(Bytes.toBytes(station.getId())));
-				result = Bytes
-						.toString(r.getValue(Bytes.toBytes("status"), Bytes.toBytes("statusSeverityDescription")));
-				log.info((r != null) ? r.toString() : "Resultset null");
+				if (r.rawCells().length > 0) {
+					String status = Bytes
+							.toString(r.getValue(Bytes.toBytes("status"), Bytes.toBytes("statusSeverityDescription")));
+					Long timestamp = r.rawCells()[0].getTimestamp();
+					result = new Pair<String, Long>(status, timestamp);
+					log.info(String.format("The status of the station %s at %d is %s", station.getName(), timestamp, status));
+				} else {
+					log.info(String.format("Status of the station %s not found in HBASE.", station.getName()));
+				}
 			}
 			return result;
 		} catch (Exception e) {

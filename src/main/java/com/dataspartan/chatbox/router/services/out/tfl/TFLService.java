@@ -1,5 +1,7 @@
 package com.dataspartan.chatbox.router.services.out.tfl;
 
+import java.text.SimpleDateFormat;
+
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +22,7 @@ public class TFLService {
 
 	private static final Logger log = LoggerFactory.getLogger(TFLService.class);
 	private static String pageAccessToken = null;
-	
+
 	@Autowired
 	private HBaseClient hbase;
 
@@ -84,11 +86,13 @@ public class TFLService {
 		} else if (StationsEnum.NOT_FOUND.equals(stationInfo.getB())) {
 			result = String.format("Sorry, We can not find any station with name %s.", stationInfo.getA());
 		} else {
-			String status = hbase.getStatusSeverityDescription(stationInfo.getB());
+			Pair<String, Long> status = hbase.getStatusSeverityDescription(stationInfo.getB());
 			if (status == null) {
-				result = String.format("Sorry, We do not have information about %s station.", stationInfo.getB().getName());
+				result = String.format("Sorry, We do not have information about %s station.",
+						stationInfo.getB().getName());
 			} else {
-				result = String.format("The %s station has %s.", stationInfo.getB().getName(), status);
+				result = String.format("The %s station has %s.\nLast updated at %s", stationInfo.getB().getName(),
+						status.getA(), new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(status.getB()));
 			}
 		}
 
@@ -104,7 +108,7 @@ public class TFLService {
 		try {
 			if (pageAccessToken == null)
 				pageAccessToken = SystemUtil.getEnv("MESSENGER_PAGE_ACCESS_TOKEN",
-					"EAAcJwZC7SUf0BAMVvQo1DpjSVCRtAiwrJeDKSop9LmXz88Jk7qaPZCsxLuHbZCv7Ex4utR3qUzndtLFGC6kqdGKkXs5QRaUMeg82XuD7Bk9ZAcBTv7fCFkLxp2zsBDWCjZCcMhHkpNqRjXj8XeXPAUaSZAMh1OXE8EpYUi2gIY6AZDZD");
+						"EAAcJwZC7SUf0BAMVvQo1DpjSVCRtAiwrJeDKSop9LmXz88Jk7qaPZCsxLuHbZCv7Ex4utR3qUzndtLFGC6kqdGKkXs5QRaUMeg82XuD7Bk9ZAcBTv7fCFkLxp2zsBDWCjZCcMhHkpNqRjXj8XeXPAUaSZAMh1OXE8EpYUi2gIY6AZDZD");
 			MessengerSendClient sendClient = MessengerPlatform.newSendClientBuilder(pageAccessToken).build();
 			sendClient.sendTextMessage(userId, message);
 		} catch (Exception e) {
