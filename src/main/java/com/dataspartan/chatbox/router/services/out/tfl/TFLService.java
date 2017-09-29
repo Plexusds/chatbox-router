@@ -82,16 +82,16 @@ public class TFLService {
 		String result = "This default message shouldnt appear!";
 
 		if (stationInfo.getA() == null) {
-			result = "Please, write the station name.";
+			result = "Sorry, We could not handle your petition.\nYou could try this service with a question like:\nWhat is the status of Bakerloo line?";
 		} else if (StationsEnum.NOT_FOUND.equals(stationInfo.getB())) {
-			result = String.format("Sorry, We can not find any station with name %s.", stationInfo.getA());
+			result = String.format("Sorry, We can not find any underground line with the name %s.", stationInfo.getA());
 		} else {
 			Pair<String, Long> status = hbase.getStatusSeverityDescription(stationInfo.getB());
 			if (status == null) {
-				result = String.format("Sorry, We do not have information about %s station.",
+				result = String.format("Sorry, We do not have information about %s underground line.",
 						stationInfo.getB().getName());
 			} else {
-				result = String.format("The %s station has %s.\nLast updated at %s", stationInfo.getB().getName(),
+				result = String.format("The %s underground line status:\n%s.\n\nLast updated at %s", stationInfo.getB().getName(),
 						status.getA(), new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(status.getB()));
 			}
 		}
