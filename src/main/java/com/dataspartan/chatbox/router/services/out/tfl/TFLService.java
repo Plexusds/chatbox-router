@@ -91,7 +91,7 @@ public class TFLService {
 				result = String.format("Sorry, We do not have information about %s underground line.",
 						stationInfo.getB().getName());
 			} else {
-				result = String.format("The %s underground line status:\n%s.\n\nLast updated at %s", stationInfo.getB().getName(),
+				result = String.format("The %s underground line status: %s.\n\nLast updated at %s", stationInfo.getB().getName(),
 						status.getA(), new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(status.getB()));
 			}
 		}
