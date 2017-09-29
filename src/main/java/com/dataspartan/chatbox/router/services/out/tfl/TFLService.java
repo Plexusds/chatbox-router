@@ -19,6 +19,7 @@ import com.github.messenger4j.send.MessengerSendClient;
 public class TFLService {
 
 	private static final Logger log = LoggerFactory.getLogger(TFLService.class);
+	private static String pageAccessToken = null;
 	
 	@Autowired
 	private HBaseClient hbase;
@@ -61,6 +62,7 @@ public class TFLService {
 				double similarity = StringSimilarity.similarity(tube_station, station.getName());
 				if (similarity > 0.5 && similarity > maxSimilarity) {
 					stationEnum = station;
+					maxSimilarity = similarity;
 				}
 
 			}
@@ -78,12 +80,16 @@ public class TFLService {
 		String result = "This default message shouldnt appear!";
 
 		if (stationInfo.getA() == null) {
-			result = "Please, write the station name ";
+			result = "Please, write the station name.";
 		} else if (StationsEnum.NOT_FOUND.equals(stationInfo.getB())) {
-			result = "Sorry, The station name " + stationInfo.getA() + " is incorrect.";
+			result = String.format("Sorry, We can not find any station with name %s.", stationInfo.getA());
 		} else {
 			String status = hbase.getStatusSeverityDescription(stationInfo.getB());
-			result = "The " + stationInfo.getB().getName() + " station has " + status;
+			if (status == null) {
+				result = String.format("Sorry, We do not have information about %s station.", stationInfo.getB().getName());
+			} else {
+				result = String.format("The %s station has %s.", stationInfo.getB().getName(), status);
+			}
 		}
 
 		return result;
@@ -96,7 +102,8 @@ public class TFLService {
 	 */
 	private void sendMessage(String userId, String message) {
 		try {
-			String pageAccessToken = SystemUtil.getEnv("MESSENGER_PAGE_ACCESS_TOKEN",
+			if (pageAccessToken == null)
+				pageAccessToken = SystemUtil.getEnv("MESSENGER_PAGE_ACCESS_TOKEN",
 					"EAAcJwZC7SUf0BAMVvQo1DpjSVCRtAiwrJeDKSop9LmXz88Jk7qaPZCsxLuHbZCv7Ex4utR3qUzndtLFGC6kqdGKkXs5QRaUMeg82XuD7Bk9ZAcBTv7fCFkLxp2zsBDWCjZCcMhHkpNqRjXj8XeXPAUaSZAMh1OXE8EpYUi2gIY6AZDZD");
 			MessengerSendClient sendClient = MessengerPlatform.newSendClientBuilder(pageAccessToken).build();
 			sendClient.sendTextMessage(userId, message);

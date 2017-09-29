@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import com.dataspartan.chatbox.router.services.out.tfl.enums.StationsEnum;
+import com.dataspartan.chatbox.router.utils.SystemUtil;
 
 @Repository
 public class HBaseClient {
@@ -23,16 +24,17 @@ public class HBaseClient {
 	public String getStatusSeverityDescription(StationsEnum station) throws Exception {
 		try {
 			String result = null;
+			String hbaseZookeeper = SystemUtil.getEnv("ZOOKEEPER_SERVER","hortonworks21:2181");
 			TableName tableName = TableName.valueOf("tfl-tube");
 			Configuration conf = HBaseConfiguration.create();
-			conf.set("hbase.zookeeper.property.clientPort", "2181");
-			conf.set("hbase.zookeeper.quorum", "hortonworks21");
+			conf.set("hbase.zookeeper.quorum", hbaseZookeeper.split(":")[0]);
+			conf.set("hbase.zookeeper.property.clientPort", hbaseZookeeper.split(":")[1]);
 			conf.set("zookeeper.znode.parent", "/hbase-unsecure");
 			try (Connection conn = ConnectionFactory.createConnection(conf); Table table = conn.getTable(tableName);) {
-				Result r = table.get(new Get(Bytes.toBytes("bakerloo")));
+				Result r = table.get(new Get(Bytes.toBytes(station.getId())));
 				result = Bytes
 						.toString(r.getValue(Bytes.toBytes("status"), Bytes.toBytes("statusSeverityDescription")));
-				System.out.println(r);
+				log.info((r != null) ? r.toString() : "Resultset null");
 			}
 			return result;
 		} catch (Exception e) {
