@@ -6,16 +6,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 
+import com.dataspartan.chatbox.router.enums.ModulesEnum;
 import com.dataspartan.chatbox.router.model.MessengerMessageVO;
-import com.dataspartan.chatbox.router.services.RouterService;
-import com.dataspartan.chatbox.router.services.enums.ModulesEnum;
+import com.dataspartan.chatbox.router.services.IRouterService;
 
 public class RouterConsumer {
 	
     private static final Logger log = LoggerFactory.getLogger(RouterConsumer.class);
 
 	@Autowired
-	private RouterService routerService;
+	private IRouterService routerService;
 	
 	@KafkaListener(topics = "messenger-message-inbox")
 	public void listen(ConsumerRecord<String, MessengerMessageVO> record) {

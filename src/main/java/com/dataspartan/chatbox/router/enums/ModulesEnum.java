@@ -1,4 +1,4 @@
-package com.dataspartan.chatbox.router.services.enums;
+package com.dataspartan.chatbox.router.enums;
 
 import java.util.Arrays;
 import java.util.HashSet;

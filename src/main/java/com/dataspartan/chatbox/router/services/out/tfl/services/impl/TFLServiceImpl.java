@@ -1,6 +1,4 @@
-package com.dataspartan.chatbox.router.services.out.tfl;
-
-import java.text.SimpleDateFormat;
+package com.dataspartan.chatbox.router.services.out.tfl.services.impl;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
@@ -9,8 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dataspartan.chatbox.router.model.MessengerMessageVO;
+import com.dataspartan.chatbox.router.services.IPropertiesService;
 import com.dataspartan.chatbox.router.services.out.tfl.enums.StationsEnum;
-import com.dataspartan.chatbox.router.services.out.tfl.hbase.HBaseClient;
+import com.dataspartan.chatbox.router.services.out.tfl.enums.StatusSeverityEnum;
+import com.dataspartan.chatbox.router.services.out.tfl.hbase.IHBaseClient;
+import com.dataspartan.chatbox.router.services.out.tfl.services.ITFLService;
 import com.dataspartan.chatbox.router.services.out.tfl.utils.StringSimilarity;
 import com.dataspartan.chatbox.router.utils.Pair;
 import com.dataspartan.chatbox.router.utils.SystemUtil;
@@ -18,13 +19,15 @@ import com.github.messenger4j.MessengerPlatform;
 import com.github.messenger4j.send.MessengerSendClient;
 
 @Service
-public class TFLService {
+public class TFLServiceImpl implements ITFLService {
 
-	private static final Logger log = LoggerFactory.getLogger(TFLService.class);
+	private static final Logger log = LoggerFactory.getLogger(TFLServiceImpl.class);
 	private static String pageAccessToken = null;
 
 	@Autowired
-	private HBaseClient hbase;
+	private IHBaseClient hbase;
+	@Autowired
+	private IPropertiesService propertiesService;
 
 	/**
 	 * 
@@ -82,17 +85,18 @@ public class TFLService {
 		String result = "This default message shouldnt appear!";
 
 		if (stationInfo.getA() == null) {
-			result = "Sorry, We could not handle your petition.\nYou could try this service with a question like:\nWhat is the status of Bakerloo line?";
+			result = "I'm sorry, I couldn't understand you.\nWhich line would you like to consult?";
 		} else if (StationsEnum.NOT_FOUND.equals(stationInfo.getB())) {
-			result = String.format("Sorry, We can not find any underground line with the name %s.", stationInfo.getA());
+			result = String.format("Sorry, We have not find any underground line with the name %s.",
+					stationInfo.getA());
 		} else {
-			Pair<String, Long> status = hbase.getStatusSeverityDescription(stationInfo.getB());
-			if (status == null) {
-				result = String.format("Sorry, We do not have information about %s underground line.",
+			StatusSeverityEnum status = hbase.getStatusSeverity(stationInfo.getB());
+			if (StatusSeverityEnum.NOT_FOUND.equals(status)) {
+				result = String.format("Sorry, We can not provide the status of %s underground line.",
 						stationInfo.getB().getName());
 			} else {
-				result = String.format("The %s underground line status: %s.\n\nLast updated at %s", stationInfo.getB().getName(),
-						status.getA(), new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(status.getB()));
+				result = propertiesService.getMessage("status.severity." + status.getSeverityLevel(),
+						new Object[] { stationInfo.getB().getName() });
 			}
 		}
 
